@@ -1,16 +1,41 @@
+# services:
+#   - type: web
+#     name: minio
+#     runtime: docker
+#     repo: https://github.com/render-examples/minio.git # optional
+#     envVars:
+#     - key: MINIO_ROOT_PASSWORD
+#       generateValue: true # will generate a base64-encoded 256-bit secret
+#     - key: MINIO_ROOT_USER
+#       sync: false # placeholder for a value to be added in the dashboard
+#     - key: PORT
+#       value: 9000
+#     disk:
+#       name: data
+#       mountPath: /data
+#       sizeGB: 10 # optional
 services:
+  # A Docker web service
   - type: web
-    name: minio
+    name: webdis
     runtime: docker
-    repo: https://github.com/render-examples/minio.git # optional
+    repo: https://github.com/render-examples/webdis.git # optional
+    region: oregon # optional (defaults to oregon)
+    plan: standard # optional (defaults to starter instance type)
+    branch: master # optional (defaults to master)
+    rootDir: webdis
+    dockerCommand: ./webdis.sh # optional (defaults to Dockerfile command)
+    numInstances: 3 # optional (defaults to 1)
+    healthCheckPath: /
     envVars:
-    - key: MINIO_ROOT_PASSWORD
-      generateValue: true # will generate a base64-encoded 256-bit secret
-    - key: MINIO_ROOT_USER
-      sync: false # placeholder for a value to be added in the dashboard
-    - key: PORT
-      value: 9000
-    disk:
-      name: data
-      mountPath: /data
-      sizeGB: 10 # optional
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: lightning
+          property: host # available properties are listed below
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: lightning
+          property: port
+      - fromGroup: conc-settings

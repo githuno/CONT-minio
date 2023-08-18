@@ -1,0 +1,7 @@
+# flyctl launch added from .gitignore
+**/data/.minio.sys/*
+
+# flyctl launch added from data/develop/.gitignore
+data/develop/**/*
+!data/develop/**/.gitignore
+fly.toml
